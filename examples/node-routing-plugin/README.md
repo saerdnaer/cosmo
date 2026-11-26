@@ -38,21 +38,29 @@ The plugin knows which subgraph owns an ID, not which type it is. Its
 ```yaml
 routes:
   kmp:cms:
-    url: ${CMS_SUBGRAPH_URL:-http://localhost:4001/graphql}
+    subgraph: cms-dgs
   kmp:comments:
-    url: ${COMMENTS_SUBGRAPH_URL:-http://localhost:4002/graphql}
+    subgraph: comments-dgs
   poc:
-    url: ${POC_SUBGRAPH_URL:-http://localhost:4003/graphql}
+    subgraph: poc-dgs
+    resolver: publicationServicePoc
 ```
 
+The subgraph names are the real ones of the Kompass graph.
+
 - The prefix is `kmp:<domain>` for Kompass IDs (`kmp:<domain>[:<type>]:<base64url reference>`)
-  and the first segment for any other ID (`poc:tv:28106` → `poc`).
+  and the first segment for any other ID (`poc:tv:28106` -> `poc`).
   [`src/kompassid`](plugins/node/src/kompassid) is a Go port of the Java parser that
   defines the Kompass ID format, so malformed Kompass IDs fail before any call.
+- `subgraph` names a subgraph of the graph. On start, the router passes every
+  subgraph's routing URL, after `overrides`, to the plugin in its `startup_config`
+  (see "Router change" below). `url` overrides it, e.g. for a service outside the graph.
+  The plugin refuses to start if a route names an unknown subgraph or a non-HTTP
+  one (gRPC subgraphs such as `dns:///sport-dgs:9090` have no GraphQL endpoint).
 - The plugin then asks the owning subgraph directly (not via the router):
-  `query($id: ID!) { node<Domain>(id: $id) { __typename } }`. The field name
-  defaults to `node` + the capitalised last prefix segment (`nodeCms`,
-  `nodeComments`, `nodePoc`) and can be set per route with `field`.
+  `query($id: ID!) { <resolver>(id: $id) { __typename } }`. `resolver` defaults to
+  `node` + the capitalised last prefix segment (`nodeCms`, `nodeComments`) and can
+  be overridden per route (`publicationServicePoc`).
 - Each subgraph decides the rest: the type, `null` for unknown IDs, or an error
   for IDs it rejects. The lookup fields are `@inaccessible`, so clients never see them.
 - `${VAR}` / `${VAR:-default}` are taken from the environment. The file is read from
@@ -60,12 +68,25 @@ routes:
 
 | ID | Result |
 |---|---|
-| prefix with a route | whatever `node<Domain>` returns |
+| prefix with a route | whatever the route's resolver returns |
 | valid `kmp:` ID, domain without a route | `null` |
 | malformed `kmp:` ID, or unknown non-`kmp` prefix | error |
 
 Each ID costs two calls to the owning subgraph: the type lookup and the
 `_entities` fetch.
+
+## Router change
+
+Plugins so far only received tracing and IP anonymization settings. This branch
+adds the graph's subgraphs to the plugin `startup_config`:
+
+```json
+{"subgraphs": [{"name": "cms-dgs", "routing_url": "http://cms-dgs:8080/graphql"}]}
+```
+
+The URLs are the ones the router itself uses, so stage-specific
+`overrides.subgraphs.<name>.routing_url` apply to the lookups too. With a router
+without this change, set `url` on every route.
 
 ## Run
 
@@ -82,7 +103,6 @@ The script prints every call each subgraph received.
 
 - The plugin must declare a stub for every type its fields can return, so adding
   such a type to a subgraph means updating the plugin schema as well.
-- Subgraph URLs live both in the router config and in the routing table.
 - The type lookup adds one subgraph call per ID. Routes could later declare a fixed
   type (e.g. `kmp:comments` → `Comment`) to skip it.
 - Batch variants such as `nodes(ids: [ID!]!)` would work the same way with a list
