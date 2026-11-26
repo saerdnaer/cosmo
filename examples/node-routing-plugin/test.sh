@@ -30,7 +30,7 @@ cleanup() { kill "${pids[@]}" 2>/dev/null || true; }
 trap cleanup EXIT
 
 for sg in cms comments poc; do
-  (cd subgraphs && exec node "$sg.js") >"$LOG_DIR/$sg.log" 2>&1 & pids+=($!)
+  (cd subgraphs && exec node "$sg.js") >"$LOG_DIR/$sg-dgs.log" 2>&1 & pids+=($!)
 done
 "$ROUTER_BIN" -config router.yaml >"$LOG_DIR/router.log" 2>&1 & pids+=($!)
 
@@ -95,7 +95,7 @@ for bad in kmp:cms kmp:nope:YWJj nope:tv:1 poc:tv:abc; do
   fi
 done
 
-for field in nodeCms nodeComments nodePoc; do
+for field in nodeCms nodeComments publicationServicePoc; do
   got=$(query "query(\$id: ID!) { $field(id: \$id) { id } }" "$ARTICLE")
   if jq -e --arg f "$field" '.errors[0].message | test($f)' <<<"$got" >/dev/null; then
     echo "PASS $field is hidden from clients"
@@ -105,5 +105,5 @@ for field in nodeCms nodeComments nodePoc; do
 done
 
 echo "--- subgraph calls"
-grep -hv "ready at" "$LOG_DIR"/{cms,comments,poc}.log
+grep -hv "ready at" "$LOG_DIR"/{cms,comments,poc}-dgs.log
 exit $failed

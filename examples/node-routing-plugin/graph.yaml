@@ -1,14 +1,14 @@
 version: 1
 subgraphs:
-  - name: cms
+  - name: cms-dgs
     routing_url: http://localhost:4001/graphql
     schema:
       file: ./subgraphs/cms.graphql
-  - name: comments
+  - name: comments-dgs
     routing_url: http://localhost:4002/graphql
     schema:
       file: ./subgraphs/comments.graphql
-  - name: poc
+  - name: poc-dgs
     routing_url: http://localhost:4003/graphql
     schema:
       file: ./subgraphs/poc.graphql

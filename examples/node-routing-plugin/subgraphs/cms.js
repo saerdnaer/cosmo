@@ -12,7 +12,7 @@ const find = (id, typename) => {
 };
 
 await serve({
-  name: 'cms',
+  name: 'cms-dgs',
   port: 4001,
   typeDefs: gql(readFileSync(new URL('./cms.graphql', import.meta.url), 'utf8')),
   resolvers: {

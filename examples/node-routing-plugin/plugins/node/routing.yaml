@@ -4,16 +4,23 @@
 # Kompass ID (kmp:<domain>:...) the prefix is kmp:<domain>; for other IDs it is
 # the first segment (e.g. poc for poc:tv:28106).
 #
-# The plugin asks the subgraph's lookup field for the concrete type of the ID:
-#   query($id: ID!) { node<Domain>(id: $id) { __typename } }
-# The field defaults to "node" + the capitalised last prefix segment
-# (kmp:cms -> nodeCms) and can be overridden with `field`.
+#   subgraph  Name of the subgraph in the graph. The router passes the routing
+#             URLs of all subgraphs (after overrides) to the plugin on start.
+#   url       Optional: call this URL instead, e.g. for a service outside the graph.
+#   resolver  Optional: lookup field on that subgraph. Default: "node" + the
+#             capitalised last prefix segment (kmp:cms -> nodeCms).
 #
-# ${VAR} is expanded from the environment, so URLs can differ per stage.
+# The plugin asks the subgraph directly (not via the router):
+#   query($id: ID!) { <resolver>(id: $id) { __typename } }
+#
+# ${VAR} and ${VAR:-default} are expanded from the environment.
 routes:
   kmp:cms:
-    url: ${CMS_SUBGRAPH_URL:-http://localhost:4001/graphql}
+    subgraph: cms-dgs
   kmp:comments:
-    url: ${COMMENTS_SUBGRAPH_URL:-http://localhost:4002/graphql}
+    subgraph: comments-dgs
   poc:
-    url: ${POC_SUBGRAPH_URL:-http://localhost:4003/graphql}
+    subgraph: poc-dgs
+    # poc-dgs's own publicationService(id) moved to this plugin; the subgraph
+    # keeps it under a domain-specific name.
+    resolver: publicationServicePoc

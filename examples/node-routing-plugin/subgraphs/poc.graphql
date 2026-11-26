@@ -24,6 +24,9 @@ type PublicationServiceRadio implements Node & PublicationService @key(fields: "
 }
 
 type Query {
-  "Lookup field for the node router plugin (route poc); hidden from clients."
-  nodePoc(id: ID!): Node @inaccessible
+  """
+  Lookup field for the node router plugin (route poc, resolver overridden in
+  routing.yaml); hidden from clients.
+  """
+  publicationServicePoc(id: ID!): Node @inaccessible
 }

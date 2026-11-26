@@ -11,7 +11,7 @@ const comments = {
 };
 
 await serve({
-  name: 'comments',
+  name: 'comments-dgs',
   port: 4002,
   typeDefs: gql(readFileSync(new URL('./comments.graphql', import.meta.url), 'utf8')),
   resolvers: {

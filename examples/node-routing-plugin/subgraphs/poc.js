@@ -12,12 +12,12 @@ const typeOf = (id) => (id.startsWith('poc:tv:') ? 'PublicationServiceTV' : 'Pub
 const find = ({ id }) => (stations[id] ? { id, ...stations[id] } : null);
 
 await serve({
-  name: 'poc',
+  name: 'poc-dgs',
   port: 4003,
   typeDefs: gql(readFileSync(new URL('./poc.graphql', import.meta.url), 'utf8')),
   resolvers: {
     Query: {
-      nodePoc: (_, { id }) => {
+      publicationServicePoc: (_, { id }) => {
         if (!pocID.test(id)) {
           throw new GraphQLError(`invalid ID ${id}: want poc:<tv|radio>:<dvbId>`);
         }

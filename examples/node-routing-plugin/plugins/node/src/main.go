@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	service "github.com/wundergraph/cosmo/examples/node-routing-plugin/plugins/node/generated"
@@ -20,7 +21,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("locate routing config: %v", err)
 	}
-	cfg, err := LoadConfig(path)
+	subgraphURLs, err := SubgraphURLsFromStartupConfig(os.Getenv("startup_config"))
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
+	cfg, err := LoadConfig(path, subgraphURLs)
 	if err != nil {
 		log.Fatalf("%v", err)
 	}

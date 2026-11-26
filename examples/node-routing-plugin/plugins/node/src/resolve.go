@@ -30,7 +30,7 @@ type Resolver struct {
 func NewResolver(cfg Config) *Resolver {
 	r := &Resolver{Routes: map[string]TypeLookup{}}
 	for prefix, route := range cfg.Routes {
-		r.Routes[prefix] = subgraphTypeLookup(route.URL, route.Field)
+		r.Routes[prefix] = subgraphTypeLookup(route.URL, route.Resolver)
 	}
 	return r
 }
