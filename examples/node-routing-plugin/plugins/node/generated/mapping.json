@@ -8,6 +8,13 @@
       "mapped": "QueryNode",
       "request": "QueryNodeRequest",
       "response": "QueryNodeResponse"
+    },
+    {
+      "type": "OPERATION_TYPE_QUERY",
+      "original": "publicationService",
+      "mapped": "QueryPublicationService",
+      "request": "QueryPublicationServiceRequest",
+      "response": "QueryPublicationServiceResponse"
     }
   ],
   "entityMappings": [
@@ -26,6 +33,30 @@
       "rpc": "LookupCommentById",
       "request": "LookupCommentByIdRequest",
       "response": "LookupCommentByIdResponse"
+    },
+    {
+      "typeName": "PublicationServiceCmsTV",
+      "kind": "entity",
+      "key": "id",
+      "rpc": "LookupPublicationServiceCmsTVById",
+      "request": "LookupPublicationServiceCmsTVByIdRequest",
+      "response": "LookupPublicationServiceCmsTVByIdResponse"
+    },
+    {
+      "typeName": "PublicationServiceTV",
+      "kind": "entity",
+      "key": "id",
+      "rpc": "LookupPublicationServiceTVById",
+      "request": "LookupPublicationServiceTVByIdRequest",
+      "response": "LookupPublicationServiceTVByIdResponse"
+    },
+    {
+      "typeName": "PublicationServiceRadio",
+      "kind": "entity",
+      "key": "id",
+      "rpc": "LookupPublicationServiceRadioById",
+      "request": "LookupPublicationServiceRadioByIdRequest",
+      "response": "LookupPublicationServiceRadioByIdResponse"
     }
   ],
   "typeFieldMappings": [
@@ -35,6 +66,16 @@
         {
           "original": "node",
           "mapped": "node",
+          "argumentMappings": [
+            {
+              "original": "id",
+              "mapped": "id"
+            }
+          ]
+        },
+        {
+          "original": "publicationService",
+          "mapped": "publication_service",
           "argumentMappings": [
             {
               "original": "id",
@@ -55,6 +96,33 @@
     },
     {
       "type": "Comment",
+      "fieldMappings": [
+        {
+          "original": "id",
+          "mapped": "id"
+        }
+      ]
+    },
+    {
+      "type": "PublicationServiceCmsTV",
+      "fieldMappings": [
+        {
+          "original": "id",
+          "mapped": "id"
+        }
+      ]
+    },
+    {
+      "type": "PublicationServiceTV",
+      "fieldMappings": [
+        {
+          "original": "id",
+          "mapped": "id"
+        }
+      ]
+    },
+    {
+      "type": "PublicationServiceRadio",
       "fieldMappings": [
         {
           "original": "id",

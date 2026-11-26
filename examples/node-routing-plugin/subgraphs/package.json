@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "cms": "node cms.js",
-    "comments": "node comments.js"
+    "comments": "node comments.js",
+    "poc": "node poc.js"
   },
   "dependencies": {
     "@apollo/server": "5.5.2",

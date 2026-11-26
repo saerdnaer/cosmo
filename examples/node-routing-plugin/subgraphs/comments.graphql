@@ -4,6 +4,7 @@ interface Node {
   id: ID!
 }
 
+"IDs: kmp:comments:<base64url reference>"
 type Comment implements Node @key(fields: "id") {
   id: ID!
   text: String!
@@ -12,8 +13,4 @@ type Comment implements Node @key(fields: "id") {
 
 type Article @key(fields: "id", resolvable: false) {
   id: ID!
-}
-
-type Query {
-  comment(id: ID!): Comment
 }

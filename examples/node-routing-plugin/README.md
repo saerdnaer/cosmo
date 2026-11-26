@@ -1,30 +1,52 @@
-# Routing `Query.node` with a router plugin
+# Routing root fields by ID with a router plugin
 
 Spike for [wundergraph/cosmo#1595](https://github.com/wundergraph/cosmo/issues/1595):
-a Relay-style `node(id: ID!): Node` root field whose objects live in different
-subgraphs, routed by the global ID and without changing the router.
+root fields such as Relay's `node(id: ID!): Node` or `publicationService(id: ID!): PublicationService`
+return objects that live in different subgraphs. The right subgraph follows from the ID.
+This example routes them with a router plugin and no change to the router.
 
 ## How it works
 
 ```
-client ── node(id: "kmp:comments:comment:7") ──▶ router
-router ── QueryNode(id) ──────────────────────▶ node plugin   → { __typename: Comment, id }
-router ── _entities([{__typename: Comment, id}]) ▶ comments   → { text, article { id } }
-router ── _entities([{__typename: Article, id}]) ▶ cms        → { title }
+client ── node(id: "kmp:comments:d6ZfvSNnRgCkwa69rhYUZQ") ─▶ router
+router ── QueryNode(id) ──────────────────────────────────▶ node plugin → { __typename: Comment, id }
+router ── _entities([{__typename: Comment, id}]) ─────────▶ comments    → { text, article { id } }
+router ── _entities([{__typename: Article, id}]) ─────────▶ cms         → { title }
 ```
 
-- The [`node` plugin](plugins/node) owns `Query.node`. It declares `interface Node`
-  and a stub of each implementing type with `@key(fields: "id", resolvable: false)`.
-  It never loads data: it maps `<prefix>:<domain>:<type>:<ref>` to a typename
-  and returns `{ id }` in the matching `oneof` branch.
-- [`cms`](subgraphs/cms.graphql) and [`comments`](subgraphs/comments.graphql) are
-  ordinary subgraphs. Each owns its `Node` types as resolvable entities.
-- The query planner sees that `Article.title` / `Comment.text` are not available in
-  the plugin and adds `_entities` fetches to the owning subgraph — standard
+- The [`node` plugin](plugins/node) owns `Query.node` and `Query.publicationService`.
+  It declares the return interfaces and a stub of each implementing type with
+  `@key(fields: "id", resolvable: false)`. It never loads data: it works out the
+  concrete type of the ID and returns `{ id }` in the matching `oneof` branch.
+- [`cms`](subgraphs/cms.graphql), [`comments`](subgraphs/comments.graphql) and
+  [`poc`](subgraphs/poc.graphql) are ordinary subgraphs that own their types as
+  resolvable entities.
+- The query planner sees that the plugin cannot resolve fields like `title` or
+  `name` and adds `_entities` fetches to the owning subgraph — standard
   federation, no custom hook.
+- Each root field accepts only the types of its own return interface:
+  `publicationService` with an article ID returns `null`.
 
-Because the plugin runs as a subprocess of the router, it costs no extra
-deployment and no extra network hop compared to a dedicated "node" subgraph.
+The plugin runs as a subprocess of the router, so it costs no extra deployment
+and no extra network hop compared to a dedicated routing subgraph.
+
+## From ID to type
+
+The IDs follow the Kompass ID format (`kmp:<domain>[:<type>]:<base64url reference>`).
+[`src/kompassid`](plugins/node/src/kompassid) is a Go port of the parsing rules of the
+Java library that defines the format.
+
+| ID | Type | How |
+|---|---|---|
+| `kmp:comments:<ref>` | `Comment` | from the domain |
+| `poc:tv:<dvbId>` / `poc:radio:<dvbId>` | `PublicationServiceTV` / `PublicationServiceRadio` | from the prefix |
+| `kmp:cms:<ref>` | `Article`, `PublicationServiceCmsTV`, … | asked from cms |
+| other valid `kmp:` domains | — | `null` |
+| malformed | — | error |
+
+CMS IDs carry no type, so the plugin asks the cms subgraph directly via
+`nodeCms(id: ID!): Node`. That field is `@inaccessible`, so clients cannot see it.
+A CMS ID therefore costs two cms calls: the type lookup and the `_entities` fetch.
 
 ## Run
 
@@ -35,13 +57,12 @@ Requires Go, Node.js, `jq` and `curl`.
 SKIP_BUILD=1 ./test.sh   # reuse earlier build output
 ```
 
-The script prints the `_entities` calls each subgraph received.
+The script prints every call each subgraph received.
 
 ## Limits
 
-- The plugin must declare a stub for every type `node` can return, so adding a
-  `Node` type to a subgraph means updating the plugin schema too.
-- The typename must be derivable from the ID. IDs without a type part would need
-  the plugin to ask the owning subgraph first.
-- `node` is a single root field: a `nodes(ids: [ID!]!)` variant would work the
-  same way with a list response.
+- The plugin must declare a stub for every type its fields can return, so adding
+  such a type to a subgraph means updating the plugin schema as well.
+- IDs without a type need a lookup in the owning subgraph (see CMS above).
+- Batch variants such as `nodes(ids: [ID!]!)` would work the same way with a list
+  response.

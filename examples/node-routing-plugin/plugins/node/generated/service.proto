@@ -5,18 +5,45 @@ option go_package = "github.com/wundergraph/cosmo/examples/node-routing-plugin/p
 
 // Service definition for NodeService
 service NodeService {
-  // Fetches any object by its global ID, independent of the subgraph that owns it.
+  // Fetches any object by its global ID (Relay Global Object Identification).
   rpc QueryNode(QueryNodeRequest) returns (QueryNodeResponse) {}
+  /*
+   * Fetches a publication service (TV or radio station) by ID, whether it lives in
+   * the CMS (`kmp:cms:<ref>`) or in the programme service (`poc:tv:<dvbId>`,
+   * `poc:radio:<dvbId>`).
+   */
+  rpc QueryPublicationService(QueryPublicationServiceRequest) returns (QueryPublicationServiceResponse) {}
 }
 
-// Request message for node operation: Fetches any object by its global ID, independent of the subgraph that owns it..
+// Request message for node operation: Fetches any object by its global ID (Relay Global Object Identification)..
 message QueryNodeRequest {
   string id = 1;
 }
-// Response message for node operation: Fetches any object by its global ID, independent of the subgraph that owns it..
+// Response message for node operation: Fetches any object by its global ID (Relay Global Object Identification)..
 message QueryNodeResponse {
-  // Fetches any object by its global ID, independent of the subgraph that owns it.
+  // Fetches any object by its global ID (Relay Global Object Identification).
   Node node = 1;
+}
+/*
+ * Request message for publicationService operation: Fetches a publication service (TV or radio station) by ID, whether it lives in
+ * the CMS (`kmp:cms:<ref>`) or in the programme service (`poc:tv:<dvbId>`,
+ * `poc:radio:<dvbId>`)..
+ */
+message QueryPublicationServiceRequest {
+  string id = 1;
+}
+/*
+ * Response message for publicationService operation: Fetches a publication service (TV or radio station) by ID, whether it lives in
+ * the CMS (`kmp:cms:<ref>`) or in the programme service (`poc:tv:<dvbId>`,
+ * `poc:radio:<dvbId>`)..
+ */
+message QueryPublicationServiceResponse {
+  /*
+   * Fetches a publication service (TV or radio station) by ID, whether it lives in
+   * the CMS (`kmp:cms:<ref>`) or in the programme service (`poc:tv:<dvbId>`,
+   * `poc:radio:<dvbId>`).
+   */
+  PublicationService publication_service = 1;
 }
 
 message Article {
@@ -27,18 +54,32 @@ message Comment {
   string id = 1;
 }
 
-/*
- * Global Object Identification (Relay) entry point for the whole supergraph.
- * 
- * This plugin owns `Query.node` but knows nothing about the domain data. It only
- * derives the concrete type from the global ID (`<prefix>:<domain>:<type>:<ref>`)
- * and returns a stub `{ __typename, id }`. The router then resolves every other
- * selected field through the regular `_entities` lookup on the subgraph that owns
- * that type.
- */
+message PublicationServiceCmsTV {
+  string id = 1;
+}
+
+message PublicationServiceTV {
+  string id = 1;
+}
+
+message PublicationServiceRadio {
+  string id = 1;
+}
+
 message Node {
   oneof instance {
   Article article = 1;
   Comment comment = 2;
+  PublicationServiceCmsTV publication_service_cms_tv = 3;
+  PublicationServiceTV publication_service_tv = 4;
+  PublicationServiceRadio publication_service_radio = 5;
+  }
+}
+
+message PublicationService {
+  oneof instance {
+  PublicationServiceCmsTV publication_service_cms_tv = 1;
+  PublicationServiceTV publication_service_tv = 2;
+  PublicationServiceRadio publication_service_radio = 3;
   }
 }

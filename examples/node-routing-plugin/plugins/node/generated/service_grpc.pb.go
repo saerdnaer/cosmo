@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	NodeService_QueryNode_FullMethodName = "/service.NodeService/QueryNode"
+	NodeService_QueryNode_FullMethodName               = "/service.NodeService/QueryNode"
+	NodeService_QueryPublicationService_FullMethodName = "/service.NodeService/QueryPublicationService"
 )
 
 // NodeServiceClient is the client API for NodeService service.
@@ -28,8 +29,12 @@ const (
 //
 // Service definition for NodeService
 type NodeServiceClient interface {
-	// Fetches any object by its global ID, independent of the subgraph that owns it.
+	// Fetches any object by its global ID (Relay Global Object Identification).
 	QueryNode(ctx context.Context, in *QueryNodeRequest, opts ...grpc.CallOption) (*QueryNodeResponse, error)
+	// Fetches a publication service (TV or radio station) by ID, whether it lives in
+	// the CMS (`kmp:cms:<ref>`) or in the programme service (`poc:tv:<dvbId>`,
+	// `poc:radio:<dvbId>`).
+	QueryPublicationService(ctx context.Context, in *QueryPublicationServiceRequest, opts ...grpc.CallOption) (*QueryPublicationServiceResponse, error)
 }
 
 type nodeServiceClient struct {
@@ -50,14 +55,28 @@ func (c *nodeServiceClient) QueryNode(ctx context.Context, in *QueryNodeRequest,
 	return out, nil
 }
 
+func (c *nodeServiceClient) QueryPublicationService(ctx context.Context, in *QueryPublicationServiceRequest, opts ...grpc.CallOption) (*QueryPublicationServiceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryPublicationServiceResponse)
+	err := c.cc.Invoke(ctx, NodeService_QueryPublicationService_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // NodeServiceServer is the server API for NodeService service.
 // All implementations must embed UnimplementedNodeServiceServer
 // for forward compatibility.
 //
 // Service definition for NodeService
 type NodeServiceServer interface {
-	// Fetches any object by its global ID, independent of the subgraph that owns it.
+	// Fetches any object by its global ID (Relay Global Object Identification).
 	QueryNode(context.Context, *QueryNodeRequest) (*QueryNodeResponse, error)
+	// Fetches a publication service (TV or radio station) by ID, whether it lives in
+	// the CMS (`kmp:cms:<ref>`) or in the programme service (`poc:tv:<dvbId>`,
+	// `poc:radio:<dvbId>`).
+	QueryPublicationService(context.Context, *QueryPublicationServiceRequest) (*QueryPublicationServiceResponse, error)
 	mustEmbedUnimplementedNodeServiceServer()
 }
 
@@ -70,6 +89,9 @@ type UnimplementedNodeServiceServer struct{}
 
 func (UnimplementedNodeServiceServer) QueryNode(context.Context, *QueryNodeRequest) (*QueryNodeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryNode not implemented")
+}
+func (UnimplementedNodeServiceServer) QueryPublicationService(context.Context, *QueryPublicationServiceRequest) (*QueryPublicationServiceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryPublicationService not implemented")
 }
 func (UnimplementedNodeServiceServer) mustEmbedUnimplementedNodeServiceServer() {}
 func (UnimplementedNodeServiceServer) testEmbeddedByValue()                     {}
@@ -110,6 +132,24 @@ func _NodeService_QueryNode_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _NodeService_QueryPublicationService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryPublicationServiceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NodeServiceServer).QueryPublicationService(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NodeService_QueryPublicationService_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NodeServiceServer).QueryPublicationService(ctx, req.(*QueryPublicationServiceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // NodeService_ServiceDesc is the grpc.ServiceDesc for NodeService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -120,6 +160,10 @@ var NodeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "QueryNode",
 			Handler:    _NodeService_QueryNode_Handler,
+		},
+		{
+			MethodName: "QueryPublicationService",
+			Handler:    _NodeService_QueryPublicationService_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

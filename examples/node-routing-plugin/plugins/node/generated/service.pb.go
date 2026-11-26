@@ -20,7 +20,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Request message for node operation: Fetches any object by its global ID, independent of the subgraph that owns it..
+// Request message for node operation: Fetches any object by its global ID (Relay Global Object Identification)..
 type QueryNodeRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -68,13 +68,13 @@ func (x *QueryNodeRequest) GetId() string {
 	return ""
 }
 
-// Response message for node operation: Fetches any object by its global ID, independent of the subgraph that owns it..
+// Response message for node operation: Fetches any object by its global ID (Relay Global Object Identification)..
 type QueryNodeResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Fetches any object by its global ID, independent of the subgraph that owns it.
+	// Fetches any object by its global ID (Relay Global Object Identification).
 	Node *Node `protobuf:"bytes,1,opt,name=node,proto3" json:"node,omitempty"`
 }
 
@@ -117,6 +117,109 @@ func (x *QueryNodeResponse) GetNode() *Node {
 	return nil
 }
 
+// Request message for publicationService operation: Fetches a publication service (TV or radio station) by ID, whether it lives in
+// the CMS (`kmp:cms:<ref>`) or in the programme service (`poc:tv:<dvbId>`,
+// `poc:radio:<dvbId>`)..
+type QueryPublicationServiceRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *QueryPublicationServiceRequest) Reset() {
+	*x = QueryPublicationServiceRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_generated_service_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *QueryPublicationServiceRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QueryPublicationServiceRequest) ProtoMessage() {}
+
+func (x *QueryPublicationServiceRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_generated_service_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use QueryPublicationServiceRequest.ProtoReflect.Descriptor instead.
+func (*QueryPublicationServiceRequest) Descriptor() ([]byte, []int) {
+	return file_generated_service_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *QueryPublicationServiceRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+// Response message for publicationService operation: Fetches a publication service (TV or radio station) by ID, whether it lives in
+// the CMS (`kmp:cms:<ref>`) or in the programme service (`poc:tv:<dvbId>`,
+// `poc:radio:<dvbId>`)..
+type QueryPublicationServiceResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Fetches a publication service (TV or radio station) by ID, whether it lives in
+	// the CMS (`kmp:cms:<ref>`) or in the programme service (`poc:tv:<dvbId>`,
+	// `poc:radio:<dvbId>`).
+	PublicationService *PublicationService `protobuf:"bytes,1,opt,name=publication_service,json=publicationService,proto3" json:"publication_service,omitempty"`
+}
+
+func (x *QueryPublicationServiceResponse) Reset() {
+	*x = QueryPublicationServiceResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_generated_service_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *QueryPublicationServiceResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QueryPublicationServiceResponse) ProtoMessage() {}
+
+func (x *QueryPublicationServiceResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_generated_service_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use QueryPublicationServiceResponse.ProtoReflect.Descriptor instead.
+func (*QueryPublicationServiceResponse) Descriptor() ([]byte, []int) {
+	return file_generated_service_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *QueryPublicationServiceResponse) GetPublicationService() *PublicationService {
+	if x != nil {
+		return x.PublicationService
+	}
+	return nil
+}
+
 type Article struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -128,7 +231,7 @@ type Article struct {
 func (x *Article) Reset() {
 	*x = Article{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_generated_service_proto_msgTypes[2]
+		mi := &file_generated_service_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -141,7 +244,7 @@ func (x *Article) String() string {
 func (*Article) ProtoMessage() {}
 
 func (x *Article) ProtoReflect() protoreflect.Message {
-	mi := &file_generated_service_proto_msgTypes[2]
+	mi := &file_generated_service_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -154,7 +257,7 @@ func (x *Article) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Article.ProtoReflect.Descriptor instead.
 func (*Article) Descriptor() ([]byte, []int) {
-	return file_generated_service_proto_rawDescGZIP(), []int{2}
+	return file_generated_service_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Article) GetId() string {
@@ -175,7 +278,7 @@ type Comment struct {
 func (x *Comment) Reset() {
 	*x = Comment{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_generated_service_proto_msgTypes[3]
+		mi := &file_generated_service_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -188,7 +291,7 @@ func (x *Comment) String() string {
 func (*Comment) ProtoMessage() {}
 
 func (x *Comment) ProtoReflect() protoreflect.Message {
-	mi := &file_generated_service_proto_msgTypes[3]
+	mi := &file_generated_service_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -201,7 +304,7 @@ func (x *Comment) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Comment.ProtoReflect.Descriptor instead.
 func (*Comment) Descriptor() ([]byte, []int) {
-	return file_generated_service_proto_rawDescGZIP(), []int{3}
+	return file_generated_service_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *Comment) GetId() string {
@@ -211,13 +314,147 @@ func (x *Comment) GetId() string {
 	return ""
 }
 
-// Global Object Identification (Relay) entry point for the whole supergraph.
-//
-// This plugin owns `Query.node` but knows nothing about the domain data. It only
-// derives the concrete type from the global ID (`<prefix>:<domain>:<type>:<ref>`)
-// and returns a stub `{ __typename, id }`. The router then resolves every other
-// selected field through the regular `_entities` lookup on the subgraph that owns
-// that type.
+type PublicationServiceCmsTV struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *PublicationServiceCmsTV) Reset() {
+	*x = PublicationServiceCmsTV{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_generated_service_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PublicationServiceCmsTV) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PublicationServiceCmsTV) ProtoMessage() {}
+
+func (x *PublicationServiceCmsTV) ProtoReflect() protoreflect.Message {
+	mi := &file_generated_service_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PublicationServiceCmsTV.ProtoReflect.Descriptor instead.
+func (*PublicationServiceCmsTV) Descriptor() ([]byte, []int) {
+	return file_generated_service_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *PublicationServiceCmsTV) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type PublicationServiceTV struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *PublicationServiceTV) Reset() {
+	*x = PublicationServiceTV{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_generated_service_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PublicationServiceTV) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PublicationServiceTV) ProtoMessage() {}
+
+func (x *PublicationServiceTV) ProtoReflect() protoreflect.Message {
+	mi := &file_generated_service_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PublicationServiceTV.ProtoReflect.Descriptor instead.
+func (*PublicationServiceTV) Descriptor() ([]byte, []int) {
+	return file_generated_service_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *PublicationServiceTV) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type PublicationServiceRadio struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *PublicationServiceRadio) Reset() {
+	*x = PublicationServiceRadio{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_generated_service_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PublicationServiceRadio) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PublicationServiceRadio) ProtoMessage() {}
+
+func (x *PublicationServiceRadio) ProtoReflect() protoreflect.Message {
+	mi := &file_generated_service_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PublicationServiceRadio.ProtoReflect.Descriptor instead.
+func (*PublicationServiceRadio) Descriptor() ([]byte, []int) {
+	return file_generated_service_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *PublicationServiceRadio) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
 type Node struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -227,13 +464,16 @@ type Node struct {
 	//
 	//	*Node_Article
 	//	*Node_Comment
+	//	*Node_PublicationServiceCmsTv
+	//	*Node_PublicationServiceTv
+	//	*Node_PublicationServiceRadio
 	Instance isNode_Instance `protobuf_oneof:"instance"`
 }
 
 func (x *Node) Reset() {
 	*x = Node{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_generated_service_proto_msgTypes[4]
+		mi := &file_generated_service_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -246,7 +486,7 @@ func (x *Node) String() string {
 func (*Node) ProtoMessage() {}
 
 func (x *Node) ProtoReflect() protoreflect.Message {
-	mi := &file_generated_service_proto_msgTypes[4]
+	mi := &file_generated_service_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -259,7 +499,7 @@ func (x *Node) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Node.ProtoReflect.Descriptor instead.
 func (*Node) Descriptor() ([]byte, []int) {
-	return file_generated_service_proto_rawDescGZIP(), []int{4}
+	return file_generated_service_proto_rawDescGZIP(), []int{9}
 }
 
 func (m *Node) GetInstance() isNode_Instance {
@@ -283,6 +523,27 @@ func (x *Node) GetComment() *Comment {
 	return nil
 }
 
+func (x *Node) GetPublicationServiceCmsTv() *PublicationServiceCmsTV {
+	if x, ok := x.GetInstance().(*Node_PublicationServiceCmsTv); ok {
+		return x.PublicationServiceCmsTv
+	}
+	return nil
+}
+
+func (x *Node) GetPublicationServiceTv() *PublicationServiceTV {
+	if x, ok := x.GetInstance().(*Node_PublicationServiceTv); ok {
+		return x.PublicationServiceTv
+	}
+	return nil
+}
+
+func (x *Node) GetPublicationServiceRadio() *PublicationServiceRadio {
+	if x, ok := x.GetInstance().(*Node_PublicationServiceRadio); ok {
+		return x.PublicationServiceRadio
+	}
+	return nil
+}
+
 type isNode_Instance interface {
 	isNode_Instance()
 }
@@ -295,9 +556,122 @@ type Node_Comment struct {
 	Comment *Comment `protobuf:"bytes,2,opt,name=comment,proto3,oneof"`
 }
 
+type Node_PublicationServiceCmsTv struct {
+	PublicationServiceCmsTv *PublicationServiceCmsTV `protobuf:"bytes,3,opt,name=publication_service_cms_tv,json=publicationServiceCmsTv,proto3,oneof"`
+}
+
+type Node_PublicationServiceTv struct {
+	PublicationServiceTv *PublicationServiceTV `protobuf:"bytes,4,opt,name=publication_service_tv,json=publicationServiceTv,proto3,oneof"`
+}
+
+type Node_PublicationServiceRadio struct {
+	PublicationServiceRadio *PublicationServiceRadio `protobuf:"bytes,5,opt,name=publication_service_radio,json=publicationServiceRadio,proto3,oneof"`
+}
+
 func (*Node_Article) isNode_Instance() {}
 
 func (*Node_Comment) isNode_Instance() {}
+
+func (*Node_PublicationServiceCmsTv) isNode_Instance() {}
+
+func (*Node_PublicationServiceTv) isNode_Instance() {}
+
+func (*Node_PublicationServiceRadio) isNode_Instance() {}
+
+type PublicationService struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Types that are assignable to Instance:
+	//
+	//	*PublicationService_PublicationServiceCmsTv
+	//	*PublicationService_PublicationServiceTv
+	//	*PublicationService_PublicationServiceRadio
+	Instance isPublicationService_Instance `protobuf_oneof:"instance"`
+}
+
+func (x *PublicationService) Reset() {
+	*x = PublicationService{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_generated_service_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PublicationService) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PublicationService) ProtoMessage() {}
+
+func (x *PublicationService) ProtoReflect() protoreflect.Message {
+	mi := &file_generated_service_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PublicationService.ProtoReflect.Descriptor instead.
+func (*PublicationService) Descriptor() ([]byte, []int) {
+	return file_generated_service_proto_rawDescGZIP(), []int{10}
+}
+
+func (m *PublicationService) GetInstance() isPublicationService_Instance {
+	if m != nil {
+		return m.Instance
+	}
+	return nil
+}
+
+func (x *PublicationService) GetPublicationServiceCmsTv() *PublicationServiceCmsTV {
+	if x, ok := x.GetInstance().(*PublicationService_PublicationServiceCmsTv); ok {
+		return x.PublicationServiceCmsTv
+	}
+	return nil
+}
+
+func (x *PublicationService) GetPublicationServiceTv() *PublicationServiceTV {
+	if x, ok := x.GetInstance().(*PublicationService_PublicationServiceTv); ok {
+		return x.PublicationServiceTv
+	}
+	return nil
+}
+
+func (x *PublicationService) GetPublicationServiceRadio() *PublicationServiceRadio {
+	if x, ok := x.GetInstance().(*PublicationService_PublicationServiceRadio); ok {
+		return x.PublicationServiceRadio
+	}
+	return nil
+}
+
+type isPublicationService_Instance interface {
+	isPublicationService_Instance()
+}
+
+type PublicationService_PublicationServiceCmsTv struct {
+	PublicationServiceCmsTv *PublicationServiceCmsTV `protobuf:"bytes,1,opt,name=publication_service_cms_tv,json=publicationServiceCmsTv,proto3,oneof"`
+}
+
+type PublicationService_PublicationServiceTv struct {
+	PublicationServiceTv *PublicationServiceTV `protobuf:"bytes,2,opt,name=publication_service_tv,json=publicationServiceTv,proto3,oneof"`
+}
+
+type PublicationService_PublicationServiceRadio struct {
+	PublicationServiceRadio *PublicationServiceRadio `protobuf:"bytes,3,opt,name=publication_service_radio,json=publicationServiceRadio,proto3,oneof"`
+}
+
+func (*PublicationService_PublicationServiceCmsTv) isPublicationService_Instance() {}
+
+func (*PublicationService_PublicationServiceTv) isPublicationService_Instance() {}
+
+func (*PublicationService_PublicationServiceRadio) isPublicationService_Instance() {}
 
 var File_generated_service_proto protoreflect.FileDescriptor
 
@@ -309,28 +683,91 @@ var file_generated_service_proto_rawDesc = []byte{
 	0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x36, 0x0a, 0x11, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4e,
 	0x6f, 0x64, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x21, 0x0a, 0x04, 0x6e,
 	0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x73, 0x65, 0x72, 0x76,
-	0x69, 0x63, 0x65, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x52, 0x04, 0x6e, 0x6f, 0x64, 0x65, 0x22, 0x19,
-	0x0a, 0x07, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x19, 0x0a, 0x07, 0x43, 0x6f, 0x6d,
-	0x6d, 0x65, 0x6e, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x02, 0x69, 0x64, 0x22, 0x6e, 0x0a, 0x04, 0x4e, 0x6f, 0x64, 0x65, 0x12, 0x2c, 0x0a, 0x07,
-	0x61, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x10, 0x2e,
-	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x48,
-	0x00, 0x52, 0x07, 0x61, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x12, 0x2c, 0x0a, 0x07, 0x63, 0x6f,
-	0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x10, 0x2e, 0x73, 0x65,
-	0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x48, 0x00, 0x52,
-	0x07, 0x63, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x42, 0x0a, 0x0a, 0x08, 0x69, 0x6e, 0x73, 0x74,
-	0x61, 0x6e, 0x63, 0x65, 0x32, 0x53, 0x0a, 0x0b, 0x4e, 0x6f, 0x64, 0x65, 0x53, 0x65, 0x72, 0x76,
-	0x69, 0x63, 0x65, 0x12, 0x44, 0x0a, 0x09, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4e, 0x6f, 0x64, 0x65,
-	0x12, 0x19, 0x2e, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79,
-	0x4e, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1a, 0x2e, 0x73, 0x65,
-	0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4e, 0x6f, 0x64, 0x65, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x48, 0x5a, 0x46, 0x67, 0x69, 0x74,
-	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x77, 0x75, 0x6e, 0x64, 0x65, 0x72, 0x67, 0x72,
-	0x61, 0x70, 0x68, 0x2f, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x2f, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c,
-	0x65, 0x73, 0x2f, 0x6e, 0x6f, 0x64, 0x65, 0x2d, 0x72, 0x6f, 0x75, 0x74, 0x69, 0x6e, 0x67, 0x2d,
-	0x70, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x2f, 0x70, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x73, 0x2f, 0x6e,
-	0x6f, 0x64, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x69, 0x63, 0x65, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x52, 0x04, 0x6e, 0x6f, 0x64, 0x65, 0x22, 0x30,
+	0x0a, 0x1e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64,
+	0x22, 0x6f, 0x0a, 0x1f, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x12, 0x4c, 0x0a, 0x13, 0x70, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
+	0x32, 0x1b, 0x2e, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x50, 0x75, 0x62, 0x6c, 0x69,
+	0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x52, 0x12, 0x70,
+	0x75, 0x62, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63,
+	0x65, 0x22, 0x19, 0x0a, 0x07, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x12, 0x0e, 0x0a, 0x02,
+	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x19, 0x0a, 0x07,
+	0x43, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x29, 0x0a, 0x17, 0x50, 0x75, 0x62, 0x6c, 0x69,
+	0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x43, 0x6d, 0x73,
+	0x54, 0x56, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02,
+	0x69, 0x64, 0x22, 0x26, 0x0a, 0x14, 0x50, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x54, 0x56, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x29, 0x0a, 0x17, 0x50, 0x75,
+	0x62, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x52, 0x61, 0x64, 0x69, 0x6f, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x86, 0x03, 0x0a, 0x04, 0x4e, 0x6f, 0x64, 0x65, 0x12, 0x2c,
+	0x0a, 0x07, 0x61, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x10, 0x2e, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c,
+	0x65, 0x48, 0x00, 0x52, 0x07, 0x61, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x12, 0x2c, 0x0a, 0x07,
+	0x63, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x10, 0x2e,
+	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x48,
+	0x00, 0x52, 0x07, 0x63, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x12, 0x5f, 0x0a, 0x1a, 0x70, 0x75,
+	0x62, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63,
+	0x65, 0x5f, 0x63, 0x6d, 0x73, 0x5f, 0x74, 0x76, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x20,
+	0x2e, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x50, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x43, 0x6d, 0x73, 0x54, 0x56,
+	0x48, 0x00, 0x52, 0x17, 0x70, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53,
+	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x43, 0x6d, 0x73, 0x54, 0x76, 0x12, 0x55, 0x0a, 0x16, 0x70,
+	0x75, 0x62, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69,
+	0x63, 0x65, 0x5f, 0x74, 0x76, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x73, 0x65,
+	0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x50, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x54, 0x56, 0x48, 0x00, 0x52, 0x14, 0x70, 0x75,
+	0x62, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x54, 0x76, 0x12, 0x5e, 0x0a, 0x19, 0x70, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x5f, 0x72, 0x61, 0x64, 0x69, 0x6f, 0x18,
+	0x05, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x20, 0x2e, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e,
+	0x50, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69,
+	0x63, 0x65, 0x52, 0x61, 0x64, 0x69, 0x6f, 0x48, 0x00, 0x52, 0x17, 0x70, 0x75, 0x62, 0x6c, 0x69,
+	0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x52, 0x61, 0x64,
+	0x69, 0x6f, 0x42, 0x0a, 0x0a, 0x08, 0x69, 0x6e, 0x73, 0x74, 0x61, 0x6e, 0x63, 0x65, 0x22, 0xb8,
+	0x02, 0x0a, 0x12, 0x50, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65,
+	0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x5f, 0x0a, 0x1a, 0x70, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x5f, 0x63, 0x6d, 0x73,
+	0x5f, 0x74, 0x76, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x20, 0x2e, 0x73, 0x65, 0x72, 0x76,
+	0x69, 0x63, 0x65, 0x2e, 0x50, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53,
+	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x43, 0x6d, 0x73, 0x54, 0x56, 0x48, 0x00, 0x52, 0x17, 0x70,
+	0x75, 0x62, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63,
+	0x65, 0x43, 0x6d, 0x73, 0x54, 0x76, 0x12, 0x55, 0x0a, 0x16, 0x70, 0x75, 0x62, 0x6c, 0x69, 0x63,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x5f, 0x74, 0x76,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x2e, 0x50, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76,
+	0x69, 0x63, 0x65, 0x54, 0x56, 0x48, 0x00, 0x52, 0x14, 0x70, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x54, 0x76, 0x12, 0x5e, 0x0a,
+	0x19, 0x70, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x73, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x5f, 0x72, 0x61, 0x64, 0x69, 0x6f, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b,
+	0x32, 0x20, 0x2e, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x50, 0x75, 0x62, 0x6c, 0x69,
+	0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x52, 0x61, 0x64,
+	0x69, 0x6f, 0x48, 0x00, 0x52, 0x17, 0x70, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x52, 0x61, 0x64, 0x69, 0x6f, 0x42, 0x0a, 0x0a,
+	0x08, 0x69, 0x6e, 0x73, 0x74, 0x61, 0x6e, 0x63, 0x65, 0x32, 0xc3, 0x01, 0x0a, 0x0b, 0x4e, 0x6f,
+	0x64, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x44, 0x0a, 0x09, 0x51, 0x75, 0x65,
+	0x72, 0x79, 0x4e, 0x6f, 0x64, 0x65, 0x12, 0x19, 0x2e, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4e, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x1a, 0x2e, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x51, 0x75, 0x65, 0x72,
+	0x79, 0x4e, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12,
+	0x6e, 0x0a, 0x17, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x27, 0x2e, 0x73, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x75, 0x62, 0x6c, 0x69, 0x63,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x28, 0x2e, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x51, 0x75,
+	0x65, 0x72, 0x79, 0x50, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65,
+	0x72, 0x76, 0x69, 0x63, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42,
+	0x48, 0x5a, 0x46, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x77, 0x75,
+	0x6e, 0x64, 0x65, 0x72, 0x67, 0x72, 0x61, 0x70, 0x68, 0x2f, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x2f,
+	0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x73, 0x2f, 0x6e, 0x6f, 0x64, 0x65, 0x2d, 0x72, 0x6f,
+	0x75, 0x74, 0x69, 0x6e, 0x67, 0x2d, 0x70, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x2f, 0x70, 0x6c, 0x75,
+	0x67, 0x69, 0x6e, 0x73, 0x2f, 0x6e, 0x6f, 0x64, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
 var (
@@ -345,25 +782,40 @@ func file_generated_service_proto_rawDescGZIP() []byte {
 	return file_generated_service_proto_rawDescData
 }
 
-var file_generated_service_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_generated_service_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_generated_service_proto_goTypes = []any{
-	(*QueryNodeRequest)(nil),  // 0: service.QueryNodeRequest
-	(*QueryNodeResponse)(nil), // 1: service.QueryNodeResponse
-	(*Article)(nil),           // 2: service.Article
-	(*Comment)(nil),           // 3: service.Comment
-	(*Node)(nil),              // 4: service.Node
+	(*QueryNodeRequest)(nil),                // 0: service.QueryNodeRequest
+	(*QueryNodeResponse)(nil),               // 1: service.QueryNodeResponse
+	(*QueryPublicationServiceRequest)(nil),  // 2: service.QueryPublicationServiceRequest
+	(*QueryPublicationServiceResponse)(nil), // 3: service.QueryPublicationServiceResponse
+	(*Article)(nil),                         // 4: service.Article
+	(*Comment)(nil),                         // 5: service.Comment
+	(*PublicationServiceCmsTV)(nil),         // 6: service.PublicationServiceCmsTV
+	(*PublicationServiceTV)(nil),            // 7: service.PublicationServiceTV
+	(*PublicationServiceRadio)(nil),         // 8: service.PublicationServiceRadio
+	(*Node)(nil),                            // 9: service.Node
+	(*PublicationService)(nil),              // 10: service.PublicationService
 }
 var file_generated_service_proto_depIdxs = []int32{
-	4, // 0: service.QueryNodeResponse.node:type_name -> service.Node
-	2, // 1: service.Node.article:type_name -> service.Article
-	3, // 2: service.Node.comment:type_name -> service.Comment
-	0, // 3: service.NodeService.QueryNode:input_type -> service.QueryNodeRequest
-	1, // 4: service.NodeService.QueryNode:output_type -> service.QueryNodeResponse
-	4, // [4:5] is the sub-list for method output_type
-	3, // [3:4] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	9,  // 0: service.QueryNodeResponse.node:type_name -> service.Node
+	10, // 1: service.QueryPublicationServiceResponse.publication_service:type_name -> service.PublicationService
+	4,  // 2: service.Node.article:type_name -> service.Article
+	5,  // 3: service.Node.comment:type_name -> service.Comment
+	6,  // 4: service.Node.publication_service_cms_tv:type_name -> service.PublicationServiceCmsTV
+	7,  // 5: service.Node.publication_service_tv:type_name -> service.PublicationServiceTV
+	8,  // 6: service.Node.publication_service_radio:type_name -> service.PublicationServiceRadio
+	6,  // 7: service.PublicationService.publication_service_cms_tv:type_name -> service.PublicationServiceCmsTV
+	7,  // 8: service.PublicationService.publication_service_tv:type_name -> service.PublicationServiceTV
+	8,  // 9: service.PublicationService.publication_service_radio:type_name -> service.PublicationServiceRadio
+	0,  // 10: service.NodeService.QueryNode:input_type -> service.QueryNodeRequest
+	2,  // 11: service.NodeService.QueryPublicationService:input_type -> service.QueryPublicationServiceRequest
+	1,  // 12: service.NodeService.QueryNode:output_type -> service.QueryNodeResponse
+	3,  // 13: service.NodeService.QueryPublicationService:output_type -> service.QueryPublicationServiceResponse
+	12, // [12:14] is the sub-list for method output_type
+	10, // [10:12] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_generated_service_proto_init() }
@@ -397,7 +849,7 @@ func file_generated_service_proto_init() {
 			}
 		}
 		file_generated_service_proto_msgTypes[2].Exporter = func(v any, i int) any {
-			switch v := v.(*Article); i {
+			switch v := v.(*QueryPublicationServiceRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -409,7 +861,7 @@ func file_generated_service_proto_init() {
 			}
 		}
 		file_generated_service_proto_msgTypes[3].Exporter = func(v any, i int) any {
-			switch v := v.(*Comment); i {
+			switch v := v.(*QueryPublicationServiceResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -421,6 +873,66 @@ func file_generated_service_proto_init() {
 			}
 		}
 		file_generated_service_proto_msgTypes[4].Exporter = func(v any, i int) any {
+			switch v := v.(*Article); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_generated_service_proto_msgTypes[5].Exporter = func(v any, i int) any {
+			switch v := v.(*Comment); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_generated_service_proto_msgTypes[6].Exporter = func(v any, i int) any {
+			switch v := v.(*PublicationServiceCmsTV); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_generated_service_proto_msgTypes[7].Exporter = func(v any, i int) any {
+			switch v := v.(*PublicationServiceTV); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_generated_service_proto_msgTypes[8].Exporter = func(v any, i int) any {
+			switch v := v.(*PublicationServiceRadio); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_generated_service_proto_msgTypes[9].Exporter = func(v any, i int) any {
 			switch v := v.(*Node); i {
 			case 0:
 				return &v.state
@@ -432,10 +944,30 @@ func file_generated_service_proto_init() {
 				return nil
 			}
 		}
+		file_generated_service_proto_msgTypes[10].Exporter = func(v any, i int) any {
+			switch v := v.(*PublicationService); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
-	file_generated_service_proto_msgTypes[4].OneofWrappers = []any{
+	file_generated_service_proto_msgTypes[9].OneofWrappers = []any{
 		(*Node_Article)(nil),
 		(*Node_Comment)(nil),
+		(*Node_PublicationServiceCmsTv)(nil),
+		(*Node_PublicationServiceTv)(nil),
+		(*Node_PublicationServiceRadio)(nil),
+	}
+	file_generated_service_proto_msgTypes[10].OneofWrappers = []any{
+		(*PublicationService_PublicationServiceCmsTv)(nil),
+		(*PublicationService_PublicationServiceTv)(nil),
+		(*PublicationService_PublicationServiceRadio)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -443,7 +975,7 @@ func file_generated_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_generated_service_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

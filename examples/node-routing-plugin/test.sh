@@ -29,8 +29,9 @@ pids=()
 cleanup() { kill "${pids[@]}" 2>/dev/null || true; }
 trap cleanup EXIT
 
-(cd subgraphs && exec node cms.js) >"$LOG_DIR/cms.log" 2>&1 & pids+=($!)
-(cd subgraphs && exec node comments.js) >"$LOG_DIR/comments.log" 2>&1 & pids+=($!)
+for sg in cms comments poc; do
+  (cd subgraphs && exec node "$sg.js") >"$LOG_DIR/$sg.log" 2>&1 & pids+=($!)
+done
 "$ROUTER_BIN" -config router.yaml >"$LOG_DIR/router.log" 2>&1 & pids+=($!)
 
 for _ in $(seq 1 60); do
@@ -54,24 +55,53 @@ check() { # name, query, id, expected JSON (compared with jq -S)
   fi
 }
 
-Q='query($id: ID!) { node(id: $id) { __typename id ... on Article { title } ... on Comment { text article { title } } } }'
+# IDs follow the Kompass ID format (kmp:<domain>:<base64url ref>, see the
+# gg.kompass:id library) plus the programme service's legacy poc:<tv|radio>:<dvbId>.
+ARTICLE=kmp:cms:mnsoYQFYSOK2EJdaYa7VGQ
+CMS_TV=kmp:cms:jLPeT7neT0OBx1d-5ZlLDA
+COMMENT=kmp:comments:d6ZfvSNnRgCkwa69rhYUZQ
+POC_TV=poc:tv:28106
+POC_RADIO=poc:radio:28402
 
-check "article routed to cms" "$Q" "kmp:cms:article:1" \
-  '{"data":{"node":{"__typename":"Article","id":"kmp:cms:article:1","title":"Hello Federation"}}}'
+NODE='query($id: ID!) { node(id: $id) { __typename id ... on Article { title } ... on Comment { text article { title } } ... on PublicationService { name } } }'
+PS='query($id: ID!) { publicationService(id: $id) { __typename id name ... on PublicationServiceCmsTV { title } ... on PublicationServiceTV { dvbId } ... on PublicationServiceRadio { dvbId } } }'
 
-check "comment routed to comments (and nested article to cms)" "$Q" "kmp:comments:comment:7" \
-  '{"data":{"node":{"__typename":"Comment","id":"kmp:comments:comment:7","text":"First!","article":{"title":"Hello Federation"}}}}'
+echo "--- node"
+check "cms article (type looked up in cms)" "$NODE" "$ARTICLE" \
+  "{\"data\":{\"node\":{\"__typename\":\"Article\",\"id\":\"$ARTICLE\",\"title\":\"Hello Federation\"}}}"
+check "comment routed to comments, nested article to cms" "$NODE" "$COMMENT" \
+  "{\"data\":{\"node\":{\"__typename\":\"Comment\",\"id\":\"$COMMENT\",\"text\":\"First!\",\"article\":{\"title\":\"Hello Federation\"}}}}"
+check "poc radio station" "$NODE" "$POC_RADIO" \
+  "{\"data\":{\"node\":{\"__typename\":\"PublicationServiceRadio\",\"id\":\"$POC_RADIO\",\"name\":\"Bayern 3\"}}}"
+check "unknown cms reference resolves to null" "$NODE" "kmp:cms:AAAAAAAAAAAAAAAAAAAAAQ" '{"data":{"node":null}}'
+check "domain without subgraph resolves to null" "$NODE" "kmp:event:YWJj" '{"data":{"node":null}}'
 
-check "unknown domain resolves to null" "$Q" "kmp:epg:broadcast:1" \
-  '{"data":{"node":null}}'
+echo "--- publicationService"
+check "cms station" "$PS" "$CMS_TV" \
+  "{\"data\":{\"publicationService\":{\"__typename\":\"PublicationServiceCmsTV\",\"id\":\"$CMS_TV\",\"name\":\"hr\",\"title\":\"hr-fernsehen\"}}}"
+check "poc tv station" "$PS" "$POC_TV" \
+  "{\"data\":{\"publicationService\":{\"__typename\":\"PublicationServiceTV\",\"id\":\"$POC_TV\",\"name\":\"Das Erste\",\"dvbId\":28106}}}"
+check "poc radio station" "$PS" "$POC_RADIO" \
+  "{\"data\":{\"publicationService\":{\"__typename\":\"PublicationServiceRadio\",\"id\":\"$POC_RADIO\",\"name\":\"Bayern 3\",\"dvbId\":28402}}}"
+check "article id is not a publication service" "$PS" "$ARTICLE" '{"data":{"publicationService":null}}'
 
-got=$(query "$Q" "kmp:cms")
-if jq -e '.data.node == null and (.errors | length > 0)' <<<"$got" >/dev/null; then
-  echo "PASS malformed id returns an error"
+echo "--- errors"
+for bad in kmp:cms kmp:nope:YWJj poc:tv:abc; do
+  got=$(query "$NODE" "$bad")
+  if jq -e '.data.node == null and (.errors | length > 0)' <<<"$got" >/dev/null; then
+    echo "PASS malformed id $bad returns an error"
+  else
+    echo "FAIL malformed id $bad returns an error"; echo "  got: $got"; failed=1
+  fi
+done
+
+got=$(query 'query($id: ID!) { nodeCms(id: $id) { id } }' "$ARTICLE")
+if jq -e '.errors[0].message | test("nodeCms")' <<<"$got" >/dev/null; then
+  echo "PASS nodeCms is hidden from clients"
 else
-  echo "FAIL malformed id returns an error"; echo "  got: $got"; failed=1
+  echo "FAIL nodeCms is hidden from clients"; echo "  got: $got"; failed=1
 fi
 
 echo "--- subgraph calls"
-cat "$LOG_DIR/cms.log" "$LOG_DIR/comments.log" | grep -v -e "ready at" -e "inline tracing"
+grep -hv "ready at" "$LOG_DIR"/{cms,comments,poc}.log
 exit $failed

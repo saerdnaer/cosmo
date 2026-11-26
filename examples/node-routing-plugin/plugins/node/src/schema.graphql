@@ -1,13 +1,29 @@
 """
-Global Object Identification (Relay) entry point for the whole supergraph.
+Root fields whose objects are spread over several subgraphs.
 
-This plugin owns `Query.node` but knows nothing about the domain data. It only
-derives the concrete type from the global ID (`<prefix>:<domain>:<type>:<ref>`)
-and returns a stub `{ __typename, id }`. The router then resolves every other
+The plugin never loads domain data. It works out the concrete type of an ID
+and returns a stub `{ __typename, id }`. The router resolves every other
 selected field through the regular `_entities` lookup on the subgraph that owns
 that type.
 """
+type Query {
+  """
+  Fetches any object by its global ID (Relay Global Object Identification).
+  """
+  node(id: ID!): Node
+  """
+  Fetches a publication service (TV or radio station) by ID, whether it lives in
+  the CMS (`kmp:cms:<ref>`) or in the programme service (`poc:tv:<dvbId>`,
+  `poc:radio:<dvbId>`).
+  """
+  publicationService(id: ID!): PublicationService
+}
+
 interface Node {
+  id: ID!
+}
+
+interface PublicationService {
   id: ID!
 }
 
@@ -19,9 +35,14 @@ type Comment implements Node @key(fields: "id", resolvable: false) {
   id: ID!
 }
 
-type Query {
-  """
-  Fetches any object by its global ID, independent of the subgraph that owns it.
-  """
-  node(id: ID!): Node
+type PublicationServiceCmsTV implements Node & PublicationService @key(fields: "id", resolvable: false) {
+  id: ID!
+}
+
+type PublicationServiceTV implements Node & PublicationService @key(fields: "id", resolvable: false) {
+  id: ID!
+}
+
+type PublicationServiceRadio implements Node & PublicationService @key(fields: "id", resolvable: false) {
+  id: ID!
 }

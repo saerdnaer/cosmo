@@ -1,14 +1,30 @@
-extend schema @link(url: "https://specs.apollo.dev/federation/v2.5", import: ["@key"])
+extend schema @link(url: "https://specs.apollo.dev/federation/v2.5", import: ["@key", "@inaccessible"])
 
 interface Node {
   id: ID!
 }
 
+interface PublicationService {
+  id: ID!
+  name: String!
+}
+
+"IDs: kmp:cms:<base64url reference> — the ID does not tell the type."
 type Article implements Node @key(fields: "id") {
   id: ID!
   title: String!
 }
 
+type PublicationServiceCmsTV implements Node & PublicationService @key(fields: "id") {
+  id: ID!
+  name: String!
+  title: String!
+}
+
 type Query {
-  article(id: ID!): Article
+  """
+  Returns the CMS document behind an ID. Used by the node router plugin to find
+  the concrete type of a CMS ID; hidden from the public supergraph.
+  """
+  nodeCms(id: ID!): Node @inaccessible
 }

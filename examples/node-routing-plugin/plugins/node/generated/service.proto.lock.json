@@ -3,7 +3,8 @@
   "messages": {
     "Query": {
       "fields": {
-        "node": 2
+        "node": 2,
+        "publicationService": 3
       },
       "reservedNumbers": [
         1
@@ -58,7 +59,47 @@
     "NodeImplementations": {
       "fields": {
         "Article": 1,
-        "Comment": 2
+        "Comment": 2,
+        "PublicationServiceCmsTV": 3,
+        "PublicationServiceTV": 4,
+        "PublicationServiceRadio": 5
+      }
+    },
+    "QueryPublicationServiceRequest": {
+      "fields": {
+        "id": 1
+      }
+    },
+    "QueryPublicationService": {
+      "fields": {
+        "id": 1
+      }
+    },
+    "QueryPublicationServiceResponse": {
+      "fields": {
+        "publication_service": 1
+      }
+    },
+    "PublicationServiceCmsTV": {
+      "fields": {
+        "id": 1
+      }
+    },
+    "PublicationServiceTV": {
+      "fields": {
+        "id": 1
+      }
+    },
+    "PublicationServiceRadio": {
+      "fields": {
+        "id": 1
+      }
+    },
+    "PublicationServiceImplementations": {
+      "fields": {
+        "PublicationServiceCmsTV": 1,
+        "PublicationServiceTV": 2,
+        "PublicationServiceRadio": 3
       }
     }
   },

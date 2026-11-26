@@ -2,20 +2,29 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
-	"strings"
+	"os"
+	"time"
 
 	service "github.com/wundergraph/cosmo/examples/node-routing-plugin/plugins/node/generated"
 	routerplugin "github.com/wundergraph/cosmo/router-plugin"
+	"github.com/wundergraph/cosmo/router-plugin/httpclient"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 func main() {
+	cmsURL := os.Getenv("CMS_SUBGRAPH_URL")
+	if cmsURL == "" {
+		cmsURL = "http://localhost:4001/graphql"
+	}
+	svc := &NodeService{resolver: &Resolver{CMSLookup: subgraphTypeLookup(cmsURL, "nodeCms")}}
+
 	pl, err := routerplugin.NewRouterPlugin(func(s *grpc.Server) {
-		s.RegisterService(&service.NodeService_ServiceDesc, &NodeService{})
+		s.RegisterService(&service.NodeService_ServiceDesc, svc)
 	}, routerplugin.WithTracing())
 	if err != nil {
 		log.Fatalf("failed to create router plugin: %v", err)
@@ -24,42 +33,100 @@ func main() {
 	pl.Serve()
 }
 
-// stubFactories maps "<domain>:<type>" of a global ID to a constructor for the
-// matching Node implementation. The plugin only returns the ID; the router
-// fetches all other selected fields from the subgraph that owns the type.
-var stubFactories = map[string]func(id string) *service.Node{
-	"cms:article": func(id string) *service.Node {
-		return &service.Node{Instance: &service.Node_Article{Article: &service.Article{Id: id}}}
-	},
-	"comments:comment": func(id string) *service.Node {
-		return &service.Node{Instance: &service.Node_Comment{Comment: &service.Comment{Id: id}}}
-	},
-}
-
-// NodeService resolves Query.node by routing on the global ID.
+// NodeService serves every root field that returns an object by ID from
+// whichever subgraph owns it. Each field only accepts the types of its return
+// interface; IDs of other types resolve to null.
 type NodeService struct {
 	service.UnimplementedNodeServiceServer
+	resolver *Resolver
 }
 
-func (s *NodeService) QueryNode(_ context.Context, req *service.QueryNodeRequest) (*service.QueryNodeResponse, error) {
-	node, err := stubFor(req.GetId())
+func (s *NodeService) QueryNode(ctx context.Context, req *service.QueryNodeRequest) (*service.QueryNodeResponse, error) {
+	typename, err := s.typeOf(ctx, req.GetId())
 	if err != nil {
 		return nil, err
 	}
-	return &service.QueryNodeResponse{Node: node}, nil
+	return &service.QueryNodeResponse{Node: nodeStub(typename, req.GetId())}, nil
 }
 
-// stubFor parses an ID of the form "<prefix>:<domain>:<type>:<reference>".
-// Unknown domains/types resolve to null, as the Relay spec allows for IDs
-// that do not identify an object.
-func stubFor(id string) (*service.Node, error) {
-	parts := strings.SplitN(id, ":", 4)
-	if len(parts) != 4 || parts[3] == "" {
-		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("invalid global ID %q: want <prefix>:<domain>:<type>:<reference>", id))
+func (s *NodeService) QueryPublicationService(ctx context.Context, req *service.QueryPublicationServiceRequest) (*service.QueryPublicationServiceResponse, error) {
+	typename, err := s.typeOf(ctx, req.GetId())
+	if err != nil {
+		return nil, err
 	}
-	factory, ok := stubFactories[parts[1]+":"+parts[2]]
-	if !ok {
-		return nil, nil
+	return &service.QueryPublicationServiceResponse{PublicationService: publicationServiceStub(typename, req.GetId())}, nil
+}
+
+func (s *NodeService) typeOf(ctx context.Context, id string) (string, error) {
+	typename, err := s.resolver.TypeOf(ctx, id)
+	var invalid InvalidIDError
+	switch {
+	case errors.As(err, &invalid):
+		return "", status.Error(codes.InvalidArgument, err.Error())
+	case err != nil:
+		return "", status.Error(codes.Unavailable, err.Error())
 	}
-	return factory(id), nil
+	return typename, nil
+}
+
+func nodeStub(typename, id string) *service.Node {
+	switch typename {
+	case "Article":
+		return &service.Node{Instance: &service.Node_Article{Article: &service.Article{Id: id}}}
+	case "Comment":
+		return &service.Node{Instance: &service.Node_Comment{Comment: &service.Comment{Id: id}}}
+	case "PublicationServiceCmsTV":
+		return &service.Node{Instance: &service.Node_PublicationServiceCmsTv{PublicationServiceCmsTv: &service.PublicationServiceCmsTV{Id: id}}}
+	case "PublicationServiceTV":
+		return &service.Node{Instance: &service.Node_PublicationServiceTv{PublicationServiceTv: &service.PublicationServiceTV{Id: id}}}
+	case "PublicationServiceRadio":
+		return &service.Node{Instance: &service.Node_PublicationServiceRadio{PublicationServiceRadio: &service.PublicationServiceRadio{Id: id}}}
+	}
+	return nil
+}
+
+func publicationServiceStub(typename, id string) *service.PublicationService {
+	switch typename {
+	case "PublicationServiceCmsTV":
+		return &service.PublicationService{Instance: &service.PublicationService_PublicationServiceCmsTv{PublicationServiceCmsTv: &service.PublicationServiceCmsTV{Id: id}}}
+	case "PublicationServiceTV":
+		return &service.PublicationService{Instance: &service.PublicationService_PublicationServiceTv{PublicationServiceTv: &service.PublicationServiceTV{Id: id}}}
+	case "PublicationServiceRadio":
+		return &service.PublicationService{Instance: &service.PublicationService_PublicationServiceRadio{PublicationServiceRadio: &service.PublicationServiceRadio{Id: id}}}
+	}
+	return nil
+}
+
+// subgraphTypeLookup asks a subgraph directly (not through the router) for
+// the __typename behind an ID, using a domain-specific lookup field such as
+// `nodeCms(id: ID!): Node`.
+func subgraphTypeLookup(url, field string) TypeLookup {
+	client := httpclient.New(httpclient.WithBaseURL(url), httpclient.WithTimeout(5*time.Second))
+	query := "query($id: ID!) { " + field + "(id: $id) { __typename } }"
+
+	return func(ctx context.Context, id string) (string, error) {
+		resp, err := client.Post(ctx, "", map[string]any{"query": query, "variables": map[string]any{"id": id}})
+		if err != nil {
+			return "", err
+		}
+		if !resp.IsSuccess() {
+			return "", fmt.Errorf("type lookup failed with HTTP %d", resp.StatusCode)
+		}
+		body, err := httpclient.UnmarshalTo[struct {
+			Data map[string]*struct {
+				Typename string `json:"__typename"`
+			} `json:"data"`
+			Errors []struct{ Message string } `json:"errors"`
+		}](resp)
+		if err != nil {
+			return "", err
+		}
+		if len(body.Errors) > 0 {
+			return "", errors.New("type lookup failed: " + body.Errors[0].Message)
+		}
+		if node := body.Data[field]; node != nil {
+			return node.Typename, nil
+		}
+		return "", nil
+	}
 }
