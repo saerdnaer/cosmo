@@ -1,0 +1,66 @@
+{
+  "version": "1.0.0",
+  "messages": {
+    "Query": {
+      "fields": {
+        "node": 2
+      },
+      "reservedNumbers": [
+        1
+      ]
+    },
+    "QueryHelloRequest": {
+      "fields": {
+        "name": 1
+      }
+    },
+    "QueryHello": {
+      "fields": {
+        "name": 1
+      }
+    },
+    "QueryHelloResponse": {
+      "fields": {
+        "hello": 1
+      }
+    },
+    "World": {
+      "fields": {
+        "id": 1,
+        "name": 2
+      }
+    },
+    "QueryNodeRequest": {
+      "fields": {
+        "id": 1
+      }
+    },
+    "QueryNode": {
+      "fields": {
+        "id": 1
+      }
+    },
+    "QueryNodeResponse": {
+      "fields": {
+        "node": 1
+      }
+    },
+    "Article": {
+      "fields": {
+        "id": 1
+      }
+    },
+    "Comment": {
+      "fields": {
+        "id": 1
+      }
+    },
+    "NodeImplementations": {
+      "fields": {
+        "Article": 1,
+        "Comment": 2
+      }
+    }
+  },
+  "enums": {}
+}

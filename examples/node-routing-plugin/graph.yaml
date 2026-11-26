@@ -1,0 +1,14 @@
+version: 1
+subgraphs:
+  - name: cms
+    routing_url: http://localhost:4001/graphql
+    schema:
+      file: ./subgraphs/cms.graphql
+  - name: comments
+    routing_url: http://localhost:4002/graphql
+    schema:
+      file: ./subgraphs/comments.graphql
+  - name: node
+    plugin:
+      version: 0.0.1
+      path: ./plugins/node

@@ -1,0 +1,44 @@
+syntax = "proto3";
+package service;
+
+option go_package = "github.com/wundergraph/cosmo/examples/node-routing-plugin/plugins/node";
+
+// Service definition for NodeService
+service NodeService {
+  // Fetches any object by its global ID, independent of the subgraph that owns it.
+  rpc QueryNode(QueryNodeRequest) returns (QueryNodeResponse) {}
+}
+
+// Request message for node operation: Fetches any object by its global ID, independent of the subgraph that owns it..
+message QueryNodeRequest {
+  string id = 1;
+}
+// Response message for node operation: Fetches any object by its global ID, independent of the subgraph that owns it..
+message QueryNodeResponse {
+  // Fetches any object by its global ID, independent of the subgraph that owns it.
+  Node node = 1;
+}
+
+message Article {
+  string id = 1;
+}
+
+message Comment {
+  string id = 1;
+}
+
+/*
+ * Global Object Identification (Relay) entry point for the whole supergraph.
+ * 
+ * This plugin owns `Query.node` but knows nothing about the domain data. It only
+ * derives the concrete type from the global ID (`<prefix>:<domain>:<type>:<ref>`)
+ * and returns a stub `{ __typename, id }`. The router then resolves every other
+ * selected field through the regular `_entities` lookup on the subgraph that owns
+ * that type.
+ */
+message Node {
+  oneof instance {
+  Article article = 1;
+  Comment comment = 2;
+  }
+}

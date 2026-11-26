@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "service": "NodeService",
+  "operationMappings": [
+    {
+      "type": "OPERATION_TYPE_QUERY",
+      "original": "node",
+      "mapped": "QueryNode",
+      "request": "QueryNodeRequest",
+      "response": "QueryNodeResponse"
+    }
+  ],
+  "entityMappings": [
+    {
+      "typeName": "Article",
+      "kind": "entity",
+      "key": "id",
+      "rpc": "LookupArticleById",
+      "request": "LookupArticleByIdRequest",
+      "response": "LookupArticleByIdResponse"
+    },
+    {
+      "typeName": "Comment",
+      "kind": "entity",
+      "key": "id",
+      "rpc": "LookupCommentById",
+      "request": "LookupCommentByIdRequest",
+      "response": "LookupCommentByIdResponse"
+    }
+  ],
+  "typeFieldMappings": [
+    {
+      "type": "Query",
+      "fieldMappings": [
+        {
+          "original": "node",
+          "mapped": "node",
+          "argumentMappings": [
+            {
+              "original": "id",
+              "mapped": "id"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Article",
+      "fieldMappings": [
+        {
+          "original": "id",
+          "mapped": "id"
+        }
+      ]
+    },
+    {
+      "type": "Comment",
+      "fieldMappings": [
+        {
+          "original": "id",
+          "mapped": "id"
+        }
+      ]
+    }
+  ]
+}

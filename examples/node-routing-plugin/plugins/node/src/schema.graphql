@@ -1,0 +1,27 @@
+"""
+Global Object Identification (Relay) entry point for the whole supergraph.
+
+This plugin owns `Query.node` but knows nothing about the domain data. It only
+derives the concrete type from the global ID (`<prefix>:<domain>:<type>:<ref>`)
+and returns a stub `{ __typename, id }`. The router then resolves every other
+selected field through the regular `_entities` lookup on the subgraph that owns
+that type.
+"""
+interface Node {
+  id: ID!
+}
+
+type Article implements Node @key(fields: "id", resolvable: false) {
+  id: ID!
+}
+
+type Comment implements Node @key(fields: "id", resolvable: false) {
+  id: ID!
+}
+
+type Query {
+  """
+  Fetches any object by its global ID, independent of the subgraph that owns it.
+  """
+  node(id: ID!): Node
+}
