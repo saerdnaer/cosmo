@@ -1315,6 +1315,7 @@ func (s *graphServer) buildGraphMux(
 		tracingAttributeExpressions:   tracingAttExpressions,
 		defaultClientTLS:              opts.defaultClientTLS,
 		perSubgraphTLS:                opts.perSubgraphTLS,
+		subgraphs:                     subgraphs,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to setup plugin host: %w", err)
@@ -1832,6 +1833,8 @@ type setupConnectorOpts struct {
 	tracingAttributeExpressions   *attributeExpressions
 	defaultClientTLS              *tls.Config
 	perSubgraphTLS                map[string]*tls.Config
+	// subgraphs carries the routing URLs after overrides, passed on to plugins.
+	subgraphs []Subgraph
 }
 
 func (s *graphServer) setupConnector(ctx context.Context, opts setupConnectorOpts) error {
@@ -1901,7 +1904,7 @@ func (s *graphServer) setupConnector(ctx context.Context, opts setupConnectorOpt
 			basePath = s.plugins.Path
 		}
 
-		startupConfig := newGRPCStartupParams(s.traceConfig, s.ipAnonymization)
+		startupConfig := newGRPCStartupParams(s.traceConfig, s.ipAnonymization, opts.subgraphs)
 
 		tracer := s.tracerProvider.Tracer("wundergraph/cosmo/router/engine/grpc", oteltrace.WithInstrumentationVersion("0.0.1"))
 
@@ -1969,8 +1972,19 @@ func (s *graphServer) setupConnector(ctx context.Context, opts setupConnectorOpt
 	return nil
 }
 
-func newGRPCStartupParams(traceConfig *rtrace.Config, ipAnonymization *IPAnonymizationConfig) grpccommon.GRPCStartupParams {
+func newGRPCStartupParams(traceConfig *rtrace.Config, ipAnonymization *IPAnonymizationConfig, subgraphs []Subgraph) grpccommon.GRPCStartupParams {
 	startupConfig := grpccommon.GRPCStartupParams{}
+
+	for _, sg := range subgraphs {
+		if sg.UrlString == "" {
+			// Plugins have no routing URL.
+			continue
+		}
+		startupConfig.Subgraphs = append(startupConfig.Subgraphs, grpccommon.GRPCSubgraph{
+			Name:       sg.Name,
+			RoutingURL: sg.UrlString,
+		})
+	}
 
 	if traceConfig.Enabled && len(traceConfig.Exporters) > 0 {
 		enabledExporters := make([]grpccommon.GRPCExporter, 0)

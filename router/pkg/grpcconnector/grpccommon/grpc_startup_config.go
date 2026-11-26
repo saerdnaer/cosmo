@@ -7,6 +7,15 @@ import (
 type GRPCStartupParams struct {
 	Telemetry       *GRPCTelemetry       `json:"telemetry,omitempty"`
 	IPAnonymization *GRPCIPAnonymization `json:"ip_anonymization,omitempty"`
+	// Subgraphs lists the subgraphs of the graph the plugin is part of, with
+	// their routing URLs after router overrides. Plugins can use it to call
+	// other subgraphs by name instead of hard-coding URLs.
+	Subgraphs []GRPCSubgraph `json:"subgraphs,omitempty"`
+}
+
+type GRPCSubgraph struct {
+	Name       string `json:"name"`
+	RoutingURL string `json:"routing_url"`
 }
 type GRPCTelemetry struct {
 	Tracing *GRPCTracing `json:"tracing,omitempty"`
