@@ -67,7 +67,7 @@ NODE='query($id: ID!) { node(id: $id) { __typename id ... on Article { title } .
 PS='query($id: ID!) { publicationService(id: $id) { __typename id name ... on PublicationServiceCmsTV { title } ... on PublicationServiceTV { dvbId } ... on PublicationServiceRadio { dvbId } } }'
 
 echo "--- node"
-check "cms article (type looked up in cms)" "$NODE" "$ARTICLE" \
+check "cms article" "$NODE" "$ARTICLE" \
   "{\"data\":{\"node\":{\"__typename\":\"Article\",\"id\":\"$ARTICLE\",\"title\":\"Hello Federation\"}}}"
 check "comment routed to comments, nested article to cms" "$NODE" "$COMMENT" \
   "{\"data\":{\"node\":{\"__typename\":\"Comment\",\"id\":\"$COMMENT\",\"text\":\"First!\",\"article\":{\"title\":\"Hello Federation\"}}}}"
@@ -86,7 +86,7 @@ check "poc radio station" "$PS" "$POC_RADIO" \
 check "article id is not a publication service" "$PS" "$ARTICLE" '{"data":{"publicationService":null}}'
 
 echo "--- errors"
-for bad in kmp:cms kmp:nope:YWJj poc:tv:abc; do
+for bad in kmp:cms kmp:nope:YWJj nope:tv:1 poc:tv:abc; do
   got=$(query "$NODE" "$bad")
   if jq -e '.data.node == null and (.errors | length > 0)' <<<"$got" >/dev/null; then
     echo "PASS malformed id $bad returns an error"
@@ -95,12 +95,14 @@ for bad in kmp:cms kmp:nope:YWJj poc:tv:abc; do
   fi
 done
 
-got=$(query 'query($id: ID!) { nodeCms(id: $id) { id } }' "$ARTICLE")
-if jq -e '.errors[0].message | test("nodeCms")' <<<"$got" >/dev/null; then
-  echo "PASS nodeCms is hidden from clients"
-else
-  echo "FAIL nodeCms is hidden from clients"; echo "  got: $got"; failed=1
-fi
+for field in nodeCms nodeComments nodePoc; do
+  got=$(query "query(\$id: ID!) { $field(id: \$id) { id } }" "$ARTICLE")
+  if jq -e --arg f "$field" '.errors[0].message | test($f)' <<<"$got" >/dev/null; then
+    echo "PASS $field is hidden from clients"
+  else
+    echo "FAIL $field is hidden from clients"; echo "  got: $got"; failed=1
+  fi
+done
 
 echo "--- subgraph calls"
 grep -hv "ready at" "$LOG_DIR"/{cms,comments,poc}.log

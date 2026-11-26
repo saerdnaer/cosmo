@@ -15,6 +15,8 @@ await serve({
   port: 4002,
   typeDefs: gql(readFileSync(new URL('./comments.graphql', import.meta.url), 'utf8')),
   resolvers: {
+    Query: { nodeComments: (_, { id }) => comments[id] ?? null },
+    Node: { __resolveType: () => 'Comment' },
     Comment: { __resolveReference: ({ id }) => comments[id] ?? null },
   },
 });

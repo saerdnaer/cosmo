@@ -1,4 +1,4 @@
-extend schema @link(url: "https://specs.apollo.dev/federation/v2.5", import: ["@key"])
+extend schema @link(url: "https://specs.apollo.dev/federation/v2.5", import: ["@key", "@inaccessible"])
 
 interface Node {
   id: ID!
@@ -21,4 +21,9 @@ type PublicationServiceRadio implements Node & PublicationService @key(fields: "
   id: ID!
   name: String!
   dvbId: Int!
+}
+
+type Query {
+  "Lookup field for the node router plugin (route poc); hidden from clients."
+  nodePoc(id: ID!): Node @inaccessible
 }

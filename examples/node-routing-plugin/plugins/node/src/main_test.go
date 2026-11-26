@@ -21,10 +21,15 @@ const (
 	otherDomain = "kmp:event:YWJj"
 )
 
+// newService routes like routing.yaml, with in-memory subgraph lookups.
 func newService() *NodeService {
-	cms := map[string]string{articleID: "Article", cmsTVID: "PublicationServiceCmsTV"}
-	return &NodeService{resolver: &Resolver{CMSLookup: func(_ context.Context, id string) (string, error) {
-		return cms[id], nil
+	fake := func(types map[string]string) TypeLookup {
+		return func(_ context.Context, id string) (string, error) { return types[id], nil }
+	}
+	return &NodeService{resolver: &Resolver{Routes: map[string]TypeLookup{
+		"kmp:cms":      fake(map[string]string{articleID: "Article", cmsTVID: "PublicationServiceCmsTV"}),
+		"kmp:comments": fake(map[string]string{commentID: "Comment"}),
+		"poc":          fake(map[string]string{pocTVID: "PublicationServiceTV", pocRadioID: "PublicationServiceRadio"}),
 	}}}
 }
 
@@ -68,7 +73,7 @@ func TestQueryPublicationService(t *testing.T) {
 }
 
 func TestInvalidID(t *testing.T) {
-	for _, id := range []string{"kmp:cms", "kmp:nope:YWJj", "poc:tv:abc", "kmp:comments:Bad:YWJj"} {
+	for _, id := range []string{"kmp:cms", "kmp:nope:YWJj", "nope:tv:1", "noprefix", "kmp:comments:Bad:YWJj"} {
 		_, err := newService().QueryNode(context.Background(), &service.QueryNodeRequest{Id: id})
 		assert.Equal(t, codes.InvalidArgument, status.Code(err), id)
 	}

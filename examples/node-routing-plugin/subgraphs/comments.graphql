@@ -1,4 +1,4 @@
-extend schema @link(url: "https://specs.apollo.dev/federation/v2.5", import: ["@key"])
+extend schema @link(url: "https://specs.apollo.dev/federation/v2.5", import: ["@key", "@inaccessible"])
 
 interface Node {
   id: ID!
@@ -13,4 +13,9 @@ type Comment implements Node @key(fields: "id") {
 
 type Article @key(fields: "id", resolvable: false) {
   id: ID!
+}
+
+type Query {
+  "Lookup field for the node router plugin (route kmp:comments); hidden from clients."
+  nodeComments(id: ID!): Node @inaccessible
 }

@@ -9,6 +9,8 @@ require (
 	google.golang.org/protobuf v1.36.5
 )
 
+require gopkg.in/yaml.v3 v3.0.1
+
 require (
 	github.com/cenkalti/backoff/v4 v4.2.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -43,5 +45,4 @@ require (
 	golang.org/x/text v0.23.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250106144421-5f5ef82da422 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250218202821-56aae31c358a // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

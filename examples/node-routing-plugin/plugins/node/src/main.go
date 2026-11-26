@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	service "github.com/wundergraph/cosmo/examples/node-routing-plugin/plugins/node/generated"
@@ -17,11 +16,15 @@ import (
 )
 
 func main() {
-	cmsURL := os.Getenv("CMS_SUBGRAPH_URL")
-	if cmsURL == "" {
-		cmsURL = "http://localhost:4001/graphql"
+	path, err := configPath()
+	if err != nil {
+		log.Fatalf("locate routing config: %v", err)
 	}
-	svc := &NodeService{resolver: &Resolver{CMSLookup: subgraphTypeLookup(cmsURL, "nodeCms")}}
+	cfg, err := LoadConfig(path)
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
+	svc := &NodeService{resolver: NewResolver(cfg)}
 
 	pl, err := routerplugin.NewRouterPlugin(func(s *grpc.Server) {
 		s.RegisterService(&service.NodeService_ServiceDesc, svc)
